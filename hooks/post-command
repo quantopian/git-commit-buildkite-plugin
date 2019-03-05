@@ -8,38 +8,33 @@ then
   exit 0
 fi
 
+add_path=${BUILDKITE_PLUGIN_GIT_COMMIT_ADD:-}
+create_branch=${BUILDKITE_PLUGIN_GIT_COMMIT_CREATE_BRANCH:-false}
 remote=${BUILDKITE_PLUGIN_GIT_COMMIT_REMOTE:-origin}
 branch=${BUILDKITE_PLUGIN_GIT_COMMIT_BRANCH:-${BUILDKITE_BRANCH}}
-message=${BUILDKITE_PLUGIN_GIT_COMMIT_MESSAGE:-"Build #${BUILDKITE_BUILD_NUMBER}"}
+commitmessage=${BUILDKITE_PLUGIN_GIT_COMMIT_MESSAGE:-"Build #${BUILDKITE_BUILD_NUMBER}"}
+tag=${BUILDKITE_PLUGIN_GIT_COMMIT_TAG:-}
 tagmessage=${BUILDKITE_PLUGIN_GIT_COMMIT_TAG_MESSAGE:-"Build #${BUILDKITE_BUILD_NUMBER}"}
+user_name=${BUILDKITE_PLUGIN_GIT_COMMIT_USER_NAME:-Buildkite CI}
+user_email=${BUILDKITE_PLUGIN_GIT_COMMIT_USER_EMAIL:-sre-team@quantopian.com}
 
-if [[ -z ${BUILDKITE_PLUGIN_GIT_COMMIT_USER_NAME} ]]; then
-  git config user.name "Buildkite CI"
-else
-  git config user.name "${BUILDKITE_PLUGIN_GIT_COMMIT_USER_NAME}"
-fi
-
-if [[ -z ${BUILDKITE_PLUGIN_GIT_COMMIT_USER_EMAIL} ]]; then
-  git config user.email "sre-team@quantopian.com"
-else
-  git config user.email "${BUILDKITE_PLUGIN_GIT_COMMIT_USER_EMAIL}"
-fi
+git config user.name "$user_name"
+git config user.email "$user_email"
 
 # Add commits
-if [[ -n ${BUILDKITE_PLUGIN_GIT_COMMIT_ADD} ]]; then
-
-  if [[ ${BUILDKITE_PLUGIN_GIT_COMMIT_CREATE_BRANCH} == "true" ]]; then
+if [[ -n "$add_path" ]]; then
+  if [[ "$create_branch" == "true" ]]; then
     git checkout -b "${branch}"
   else
     git fetch "${remote}" "${branch}:${branch}"
     git checkout "${branch}"
   fi
 
-  git add -A "${BUILDKITE_PLUGIN_GIT_COMMIT_ADD}"
+  git add -A "$add_path"
 
   if ! git diff-index --quiet HEAD; then
     echo "--- Committing changes"
-    git commit -m "${message}"
+    git commit -m "${commitmessage}"
 
     echo "--- Pushing ${branch} to ${remote}"
     git push "${remote}" "${branch}"
@@ -49,12 +44,12 @@ if [[ -n ${BUILDKITE_PLUGIN_GIT_COMMIT_ADD} ]]; then
 fi
 
 # Add tag
-if [[ -n ${BUILDKITE_PLUGIN_GIT_COMMIT_TAG} ]]; then
-  echo "--- Tagging with ${BUILDKITE_PLUGIN_GIT_COMMIT_TAG}"
-  git tag -f -a ${BUILDKITE_PLUGIN_GIT_COMMIT_TAG} -m "$tagmessage"
+if [[ -n "$tag" ]]; then
+  echo "--- Tagging with $tag"
+  git tag -f -a $tag -m "$tagmessage"
 
   echo "--- Pushing tag to ${remote}"
-  git push -f ${remote} --tags ${BUILDKITE_PLUGIN_GIT_COMMIT_TAG}
+  git push -f ${remote} --tags "$tag"
 else
   echo "--- No tags to push"
 fi
