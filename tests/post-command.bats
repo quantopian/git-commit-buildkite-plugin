@@ -219,6 +219,8 @@ post_command_hook="$PWD/hooks/post-command"
   stub git \
     "config user.name Buildkite\ CI : echo config.name" \
     "config user.email sre-team@quantopian.com : echo config.email" \
+    "fetch origin master:master : echo fetch" \
+    "checkout master : echo checkout" \
     "tag -f -a \"v1.0.0\" -m \"Buildkite Test\" : echo tag" \
     "push -f origin --tags \"v1.0.0\" : echo tag push"
 

@@ -21,15 +21,15 @@ user_email=${BUILDKITE_PLUGIN_GIT_COMMIT_USER_EMAIL:-sre-team@quantopian.com}
 git config user.name "$user_name"
 git config user.email "$user_email"
 
+if [[ "$create_branch" == "true" ]]; then
+  git checkout -b "${branch}"
+else
+  git fetch "${remote}" "${branch}:${branch}"
+  git checkout "${branch}"
+fi
+
 # Add commits
 if [[ -n "$add_path" ]]; then
-  if [[ "$create_branch" == "true" ]]; then
-    git checkout -b "${branch}"
-  else
-    git fetch "${remote}" "${branch}:${branch}"
-    git checkout "${branch}"
-  fi
-
   git add -A "$add_path"
 
   if ! git diff-index --quiet HEAD; then
