@@ -34,7 +34,7 @@ steps:
 
 ## Configuration
 
-- **add** (optional, defaults to `.`)
+- **add** (optional)
 
     A pathspec that will be passed to `git add -A` to add changed files.
 
@@ -54,13 +54,21 @@ steps:
 
     The git remote where changes will be pushed.
 
-- **user.email** (optional)
+- **tag** (optional)
 
-    If given, will configure the git user email for the repo.
+    If provided, the name of an annotated tag to push to `remote`
 
-- **user.name** (optional)
+- **tag-message** (optional, defaults to `Build #${BUILDKITE_BUILD_NUMBER}`)
 
-    If given, will configure the git user name for the repo.
+    The message to associate with the annotated `tag`
+
+- **user.email** (optional, defaults to `sre-team@quantopian.com`)
+
+    If given, will configure the git user email for commits to the repo.
+
+- **user.name** (optional, defaults to `Buildkite CI`)
+
+    If given, will configure the git user name for commits to the repo.
 
 
 ## Tests / Linting

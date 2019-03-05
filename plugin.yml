@@ -12,6 +12,10 @@ configuration:
       type: boolean
     message:
       type: string
+    tag:
+      type: string
+    tag-message:
+      type: string
     remote:
       type: string
     user:
