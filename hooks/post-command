@@ -58,6 +58,6 @@ else
 fi
 
 if [[ "$pull_request" == "true" ]]; then
-  url=$(hub pull-request --no-edit -l "${pull_request_labels}" -m "${pull_request_message}")
+  url=$(GITHUB_TOKEN=${GITHUB_PR_API_TOKEN} hub pull-request --no-edit -l "${pull_request_labels}" -m "${pull_request_message}")
   echo "--- Pull request submitted: ${url}"
 fi
