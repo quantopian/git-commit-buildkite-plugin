@@ -18,6 +18,12 @@ configuration:
       type: string
     remote:
       type: string
+    pull-request:
+      type: boolean
+    pull-request-labels:
+      type: string
+    pull-request-message:
+      type: string
     user:
       type: object
       properties:

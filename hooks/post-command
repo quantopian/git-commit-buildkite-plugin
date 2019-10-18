@@ -17,6 +17,9 @@ tag=${BUILDKITE_PLUGIN_GIT_COMMIT_TAG:-}
 tagmessage=${BUILDKITE_PLUGIN_GIT_COMMIT_TAG_MESSAGE:-"Build #${BUILDKITE_BUILD_NUMBER}"}
 user_name=${BUILDKITE_PLUGIN_GIT_COMMIT_USER_NAME:-Buildkite CI}
 user_email=${BUILDKITE_PLUGIN_GIT_COMMIT_USER_EMAIL:-sre-team@quantopian.com}
+pull_request=${BUILDKITE_PLUGIN_GIT_COMMIT_PULL_REQUEST:-false}
+pull_request_labels=${BUILDKITE_PLUGIN_GIT_COMMIT_PULL_REQUEST_LABELS}
+pull_request_message=${BUILDKITE_PLUGIN_GIT_COMMIT_PULL_REQUEST_MESSAGE}
 
 git config user.name "$user_name"
 git config user.email "$user_email"
@@ -52,4 +55,9 @@ if [[ -n "$tag" ]]; then
   git push -f ${remote} --tags "$tag"
 else
   echo "--- No tags to push"
+fi
+
+if [[ "$pull_request" == "true" ]]; then
+  url=$(hub pull-request --no-edit -l "${pull_request_labels}" -m "${pull_request_message}")
+  echo "--- Pull request submitted: ${url}"
 fi
