@@ -73,7 +73,7 @@ if [[ "$pull_request" == "true" ]]; then
     timeout_secs=$(( $pull_request_wait_for_merge_timeout_mins * 60 ))
     elapsed_secs=0
     while [[ $elapsed_secs -lt $timeout_secs ]]; do
-      if pr_out=$(GITHUB_TOKEN=${GITHUB_PR_API_TOKEN} hub api /repos/quantopian/qbernetes/pulls/${pr_number}/merge); then
+      if GITHUB_TOKEN=${GITHUB_PR_API_TOKEN} hub api /repos/quantopian/qbernetes/pulls/${pr_number}/merge > /dev/null; then
         echo "PR was merged"
         exit 0
       fi
