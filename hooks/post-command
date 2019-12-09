@@ -73,13 +73,14 @@ if [[ "$pull_request" == "true" ]]; then
     timeout_secs=$(( $pull_request_wait_for_merge_timeout_mins * 60 ))
     elapsed_secs=0
     while [[ $elapsed_secs -lt $timeout_secs ]]; do
-      if hub api --flat /repos/quantopian/qbernetes/pulls/${pr_number}/merge >/dev/null; then
-        echo "PR has been merged"
+      if pr_out=$(hub api /repos/quantopian/qbernetes/pulls/${pr_number}/merge); then
+        echo "PR was merged"
         exit 0
+      else
+        echo "$pr_out"
       fi
       sleep 5
       elapsed_secs=$(( $elapsed_secs + 5 ))
-      echo -n .
     done
     echo "Error: PR was not merged in time. Exiting."
     exit 100
