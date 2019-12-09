@@ -86,6 +86,10 @@ steps:
 
     If true, the plugin will wait for the created PR to be merged before continuing
 
+- **pull-request-wait-for-merge-timeout-mins** (optional, defaults to `10`)
+
+    The number of minutes to wait for PR merge until exiting non-zero
+
 ## Tests / Linting
 
 To run the tests of this plugin, run
