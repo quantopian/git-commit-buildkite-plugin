@@ -82,7 +82,7 @@ steps:
 
     Message to provide PR
 
-- **pull-request-wait-for-merge** (optional, defaults to `false`)
+- **pull-request-wait-for-merge** (optional, defaults to `true`)
 
     If true, the plugin will wait for the created PR to be merged before continuing
 

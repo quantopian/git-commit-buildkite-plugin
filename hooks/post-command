@@ -23,7 +23,7 @@ user_email=${BUILDKITE_PLUGIN_GIT_COMMIT_USER_EMAIL:-sre-team@quantopian.com}
 pull_request=${BUILDKITE_PLUGIN_GIT_COMMIT_PULL_REQUEST:-false}
 pull_request_labels=${BUILDKITE_PLUGIN_GIT_COMMIT_PULL_REQUEST_LABELS}
 pull_request_message=${BUILDKITE_PLUGIN_GIT_COMMIT_PULL_REQUEST_MESSAGE}
-pull_request_wait_for_merge=${BUILDKITE_PLUGIN_GIT_COMMIT_PULL_REQUEST_WAIT_FOR_MERGE:-false}
+pull_request_wait_for_merge=${BUILDKITE_PLUGIN_GIT_COMMIT_PULL_REQUEST_WAIT_FOR_MERGE:-true}
 pull_request_wait_for_merge_timeout_mins=${BUILDKITE_PLUGIN_GIT_COMMIT_PULL_REQUEST_WAIT_FOR_MERGE_TIMEOUT_MINS:-10}
 
 git config user.name "$user_name"
