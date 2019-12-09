@@ -70,6 +70,21 @@ steps:
 
     If given, will configure the git user name for commits to the repo.
 
+- **pull-request** (optional, defaults to `false`)
+
+    If `true`, opens a pull request for the commit. Requires GITHUB_TOKEN env
+
+- **pull-request-labels** (required if pull-request is true)
+
+    Comma-separated string of labels to add to pull request
+
+- **pull-request-message** (required if pull-request is true)
+
+    Message to provide PR
+
+- **pull-request-wait-for-merge** (optional, defaults to `false`)
+
+    If true, the plugin will wait for the created PR to be merged before continuing
 
 ## Tests / Linting
 

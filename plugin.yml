@@ -24,6 +24,8 @@ configuration:
       type: string
     pull-request-message:
       type: string
+    pull-request-wait-for-merge:
+      type: boolean
     user:
       type: object
       properties:

@@ -23,6 +23,8 @@ user_email=${BUILDKITE_PLUGIN_GIT_COMMIT_USER_EMAIL:-sre-team@quantopian.com}
 pull_request=${BUILDKITE_PLUGIN_GIT_COMMIT_PULL_REQUEST:-false}
 pull_request_labels=${BUILDKITE_PLUGIN_GIT_COMMIT_PULL_REQUEST_LABELS}
 pull_request_message=${BUILDKITE_PLUGIN_GIT_COMMIT_PULL_REQUEST_MESSAGE}
+pull_request_wait_for_merge=${BUILDKITE_PLUGIN_GIT_COMMIT_PULL_REQUEST_WAIT_FOR_MERGE:-false}
+pull_request_wait_for_merge_timeout_mins=${BUILDKITE_PLUGIN_GIT_COMMIT_PULL_REQUEST_WAIT_FOR_MERGE_TIMEOUT_MINS:-10}
 
 git config user.name "$user_name"
 git config user.email "$user_email"
@@ -62,5 +64,22 @@ fi
 
 if [[ "$pull_request" == "true" ]]; then
   url=$(GITHUB_TOKEN=${GITHUB_PR_API_TOKEN} hub pull-request --no-edit -l "${pull_request_labels}" -m "${pull_request_message}")
-  echo "--- Pull request submitted: ${url}"
+  pr_number=${url##*/}
+  echo "--- Pull request $pr_number submitted"
+  echo "${url}"
+
+  if [[ $pull_request_wait_for_merge == "true" ]]; then
+    echo "--- Waiting up to ${pull_request_wait_for_merge_timeout_mins} minutes for PR ${pr_number} to merge"
+    timeout_secs=$(( $pull_request_wait_for_merge_timeout_mins * 60 ))
+    elapsed_secs=0
+    echo "(Each dot represents 5 seconds)"
+    while [[ $elapsed_secs -lt $timeout_secs ]]; do
+      hub api -X GET /repos/quantopian/qbernetes/pulls/${pr_number}/merge >/dev/null && exit 0
+      sleep 5
+      elapsed_secs=$(( $elapsed_secs + 5 ))
+      echo -n .
+    done
+    echo "Error: PR was not merged in time. Exiting."
+    exit 100
+  fi
 fi
