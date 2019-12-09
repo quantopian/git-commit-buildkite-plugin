@@ -72,9 +72,11 @@ if [[ "$pull_request" == "true" ]]; then
     echo "--- Waiting up to ${pull_request_wait_for_merge_timeout_mins} minutes for PR ${pr_number} to merge"
     timeout_secs=$(( $pull_request_wait_for_merge_timeout_mins * 60 ))
     elapsed_secs=0
-    echo "(Each dot represents 5 seconds)"
     while [[ $elapsed_secs -lt $timeout_secs ]]; do
-      hub api -X GET /repos/quantopian/qbernetes/pulls/${pr_number}/merge >/dev/null && exit 0
+      if hub api --flat /repos/quantopian/qbernetes/pulls/${pr_number}/merge >/dev/null; then
+        echo "PR has been merged"
+        exit 0
+      fi
       sleep 5
       elapsed_secs=$(( $elapsed_secs + 5 ))
       echo -n .
