@@ -37,6 +37,8 @@ else
   git checkout "${branch}"
 fi
 
+has_changes=1
+
 # Add commits
 if [[ -n "$add_path" ]]; then
   git add -A "$add_path"
@@ -49,6 +51,7 @@ if [[ -n "$add_path" ]]; then
     git push "${remote}" "${branch}"
   else
     echo "--- No changes to commit"
+    has_changes=0
   fi
 fi
 
@@ -64,6 +67,10 @@ else
 fi
 
 if [[ "$pull_request" == "true" ]]; then
+  if [[ "$has_changes" == "0" ]]; then
+    echo "--- No changes, so skipping pull request"
+    exit 0
+  fi
   # hub command is from https://hub.github.com/
   url=$(GITHUB_TOKEN=${GITHUB_PR_API_TOKEN} hub pull-request --no-edit -l "${pull_request_labels}" -m "${pull_request_message}" -b "${pull_request_base_branch}")
   pr_number=${url##*/}
