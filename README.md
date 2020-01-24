@@ -82,6 +82,11 @@ steps:
 
     Message to provide PR
 
+- **pull-request-base-branch** (optional, defaults to `master`)
+
+    The branch where changes are committed will be merged into this branch by
+    merging the pull request.
+
 - **pull-request-wait-for-merge** (optional, defaults to `true`)
 
     If true, the plugin will wait for the created PR to be merged before continuing

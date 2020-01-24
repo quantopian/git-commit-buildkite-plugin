@@ -23,6 +23,7 @@ user_email=${BUILDKITE_PLUGIN_GIT_COMMIT_USER_EMAIL:-sre-team@quantopian.com}
 pull_request=${BUILDKITE_PLUGIN_GIT_COMMIT_PULL_REQUEST:-false}
 pull_request_labels=${BUILDKITE_PLUGIN_GIT_COMMIT_PULL_REQUEST_LABELS}
 pull_request_message=${BUILDKITE_PLUGIN_GIT_COMMIT_PULL_REQUEST_MESSAGE}
+pull_request_base_branch=${BUILDKITE_PLUGIN_GIT_COMMIT_PULL_REQUEST_BASE_BRANCH:-master}
 pull_request_wait_for_merge=${BUILDKITE_PLUGIN_GIT_COMMIT_PULL_REQUEST_WAIT_FOR_MERGE:-true}
 pull_request_wait_for_merge_timeout_mins=${BUILDKITE_PLUGIN_GIT_COMMIT_PULL_REQUEST_WAIT_FOR_MERGE_TIMEOUT_MINS:-10}
 
@@ -36,6 +37,8 @@ else
   git checkout "${branch}"
 fi
 
+has_changes=1
+
 # Add commits
 if [[ -n "$add_path" ]]; then
   git add -A "$add_path"
@@ -48,6 +51,7 @@ if [[ -n "$add_path" ]]; then
     git push "${remote}" "${branch}"
   else
     echo "--- No changes to commit"
+    has_changes=0
   fi
 fi
 
@@ -63,7 +67,12 @@ else
 fi
 
 if [[ "$pull_request" == "true" ]]; then
-  url=$(GITHUB_TOKEN=${GITHUB_PR_API_TOKEN} hub pull-request --no-edit -l "${pull_request_labels}" -m "${pull_request_message}")
+  if [[ "$has_changes" == "0" ]]; then
+    echo "--- No changes, so skipping pull request"
+    exit 0
+  fi
+  # hub command is from https://hub.github.com/
+  url=$(GITHUB_TOKEN=${GITHUB_PR_API_TOKEN} hub pull-request --no-edit -l "${pull_request_labels}" -m "${pull_request_message}" -b "${pull_request_base_branch}")
   pr_number=${url##*/}
   echo "--- Pull request $pr_number submitted"
   echo "${url}"
